@@ -25,7 +25,7 @@ For questions or comments, please contact: Joe Welch (jwelch@launchcg.com)
     - Create redirect UI: Web platform, https://localhost:{myport}/signin-oidc  where {myport} is your desired port (e.g. 54440)
     - Under Authentication tab, check both 'Access tokens' and 'ID tokens'
     - On the overview tab, make note of the tenant (or directory) id.  You'll need that later...
-- Step 2: Generate a dotnet sample app with Auth.  Run: dotnet new webapp --auth MultiOrg
+- Step 2: Generate a dotnet sample app with Auth.  Run: dotnet new mvc --auth SingleOrg
 - Step 3: Modify app to connect to AAD
     - In the appsettings.json file, modify the AzureAd section to fill in the following information
         - Instance => https://login.microsoftonline.com/
