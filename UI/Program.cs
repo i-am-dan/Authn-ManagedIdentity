@@ -14,6 +14,20 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://babdd027-ceb1-49a3-a58c-39e1f557874b/Users.ReadWrite.All"})
     .AddInMemoryTokenCaches();
 
+builder.Services.Configure<MicrosoftIdentityOptions>(OpenIdConnectDefaults.AuthenticationScheme, options => 
+    {
+        options.Events = new OpenIdConnectEvents()
+        {
+            OnRedirectToIdentityProvider = ctx => {
+                return Task.CompletedTask;
+            },
+            OnTokenValidated  = ctx => {
+                return Task.CompletedTask;
+            }
+        };
+    }
+);
+
 builder.Services.AddControllersWithViews(options =>
 {
     var policy = new AuthorizationPolicyBuilder()
