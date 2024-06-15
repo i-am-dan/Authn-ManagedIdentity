@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web.Resource;
 
 namespace API.Controllers;
