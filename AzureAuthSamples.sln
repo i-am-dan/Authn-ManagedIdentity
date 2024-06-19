@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "UI\UI.csproj", "{1FA16ADA-3B63-4666-929E-43FDCCCA4579}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{AF718C10-1BB1-4414-8050-3F9F3D9AEFBC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "B2C", "B2C", "{1B83CA30-6EC1-4502-B22F-99DE7ACBBA50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "B2C\UI\UI.csproj", "{03870FDE-BC8F-4432-8018-C6F3C7BBD423}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FA16ADA-3B63-4666-929E-43FDCCCA4579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FA16ADA-3B63-4666-929E-43FDCCCA4579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FA16ADA-3B63-4666-929E-43FDCCCA4579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FA16ADA-3B63-4666-929E-43FDCCCA4579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF718C10-1BB1-4414-8050-3F9F3D9AEFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF718C10-1BB1-4414-8050-3F9F3D9AEFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF718C10-1BB1-4414-8050-3F9F3D9AEFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF718C10-1BB1-4414-8050-3F9F3D9AEFBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03870FDE-BC8F-4432-8018-C6F3C7BBD423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03870FDE-BC8F-4432-8018-C6F3C7BBD423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03870FDE-BC8F-4432-8018-C6F3C7BBD423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03870FDE-BC8F-4432-8018-C6F3C7BBD423}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{03870FDE-BC8F-4432-8018-C6F3C7BBD423} = {1B83CA30-6EC1-4502-B22F-99DE7ACBBA50}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D509298-E626-4055-A61D-5AD3C2F1562F}
+	EndGlobalSection
+EndGlobal
