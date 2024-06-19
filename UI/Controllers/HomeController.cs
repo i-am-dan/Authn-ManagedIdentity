@@ -12,49 +12,45 @@ using Azure.Identity;
 using Azure.Core;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 
 namespace UI.Controllers;
 
-[Authorize]
+// [Authorize]
 public class HomeController : Controller
 {
-    private readonly ITokenAcquisition _tokenAcquisition;
+    //private readonly ITokenAcquisition _tokenAcquisition;
 
     private readonly ILogger<HomeController> _logger;
-    
-    //private readonly IDownstreamApi _downstreamApi;
 
-    // private readonly IHttpClientFactory _httpClientFactory;
-
-    public HomeController(ILogger<HomeController> logger, ITokenAcquisition tokenAcquisition)
+    public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
-        _tokenAcquisition = tokenAcquisition;
-        // _httpClientFactory = httpClientFactory;
-        //_downstreamApi = downstreamApi;
     }
     
-    [AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
+    // [AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
     public async Task<IActionResult> Index()
-    {
+    {     
         /*This is trying managed identity*/
-        //var token = await GetAccessTokenAsync("api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d");
-        
-        /*Client Secret*/
-        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"});
-        HttpClient httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);        
-        
-        /*Managed Identity*/
         // var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions{
         //     ExcludeEnvironmentCredential = true,
         //     ExcludeManagedIdentityCredential = true,
         //     ExcludeVisualStudioCredential = true,
-        //     ExcludeAzureCliCredential = true,
         //     ExcludeAzurePowerShellCredential = true,
-        //     ExcludeSharedTokenCacheCredential=true
+        //     ExcludeSharedTokenCacheCredential= true,
+        //     ExcludeWorkloadIdentityCredential= true,
+        //     ExcludeAzureCliCredential = true,
+        //     ExcludeAzureDeveloperCliCredential = true
         // });
 
+        //var atoken = await credential.GetTokenAsync(new Azure.Core.TokenRequestContext(new string[] {"api://e13b8721-0e2f-4158-8e01-e93c0e97041e/user_impersonation"}));
+        //var actoken = atoken.ToString();
+        
+        /*Client Secret*/
+        //var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"});
+        HttpClient httpClient = new HttpClient();
+        //httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", actoken);        
+    
 
         //var credential = new DefaultAzureCredential();
         //string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
@@ -62,26 +58,18 @@ public class HomeController : Controller
 
         // // Define the scope of the token
         //string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
-        string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
+        //string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
 
-        // // Get the token
-        //var accessToken = await credential.GetTokenAsync(new Azure.Core.TokenRequestContext(scopes));
+        // Get the token
+        //var accessToken = await credential.GetTokenAsync(new Azure.Core.TokenRequestContext());
 
         /*Local*/
-        //var jsonData = await httpClient.GetStringAsync("https://api-azureauthsample.azurewebsites.net/WeatherForecast");
-        var jsonData = await httpClient.GetStringAsync("https://localhost:7111/WeatherForecast");
-
+        var jsonData = await httpClient.GetStringAsync("https://api-azureauthsample.azurewebsites.net/WeatherForecast");
+        //var jsonData = await httpClient.GetStringAsync("https://localhost:7111/WeatherForecast");
           
         ViewData["ApiResult"] = jsonData;
         
         return View();
-    }
-
-    private static IManagedIdentityApplication CreateManagedIdentityApplication()
-    {
-           
-        return ManagedIdentityApplicationBuilder.Create(ManagedIdentityId.SystemAssigned).Build();
-    
     }
 
     public IActionResult Privacy()
