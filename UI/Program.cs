@@ -1,22 +1,18 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Azure.Identity;
-using Microsoft.Extensions.Azure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 //DO NOT TOUCH
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-    .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/Users.ReadWrite.All"})
-    .AddInMemoryTokenCaches();
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+    // .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/Users.ReadWrite.All"})
+    // .AddInMemoryTokenCaches();
 
 //wire up graph call
 

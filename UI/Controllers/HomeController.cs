@@ -22,15 +22,14 @@ public class HomeController : Controller
     //private readonly ITokenAcquisition _tokenAcquisition;
 
     private readonly ILogger<HomeController> _logger;
-    private readonly ITokenAcquisition _tokenAcquisition;
+    //private readonly ITokenAcquisition _tokenAcquisition;
 
-    public HomeController(ILogger<HomeController> logger, ITokenAcquisition tokenAcquisition)
+    public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
-        _tokenAcquisition = tokenAcquisition;
     }
     
-    [AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
+    //[AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
     public async Task<IActionResult> Index()
     {    
         //api://e13b8721-0e2f-4158-8e01-e93c0e97041e/user_impersonation
@@ -38,14 +37,15 @@ public class HomeController : Controller
         string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
         //var userAccessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] {"user.read"});
 
-        //var credential = new DefaultAzureCredential();
+        var credential = new DefaultAzureCredential();
      
-        //var tokenExchangeRequest = new Azure.Core.TokenRequestContext(scopes);
-        //var token = await credential.GetTokenAsync(tokenExchangeRequest);
+        var tokenExchangeRequest = new Azure.Core.TokenRequestContext(scopes);
+        var token = await credential.GetTokenAsync(tokenExchangeRequest);
         //Console.WriteLine(token);
-        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"});
+        //var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"});
         HttpClient httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);        
+
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Token);        
     
 
         // string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
