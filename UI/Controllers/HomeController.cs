@@ -22,30 +22,38 @@ public class HomeController : Controller
     //private readonly ITokenAcquisition _tokenAcquisition;
 
     private readonly ILogger<HomeController> _logger;
-    //private readonly ITokenAcquisition _tokenAcquisition;
+    private readonly ITokenAcquisition _tokenAcquisition;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ITokenAcquisition tokenAcquisition)
     {
         _logger = logger;
+        _tokenAcquisition = tokenAcquisition;
     }
     
-    //[AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
+    [AuthorizeForScopes(Scopes = new string[] {"api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default"})]
     public async Task<IActionResult> Index()
     {    
         //api://e13b8721-0e2f-4158-8e01-e93c0e97041e/user_impersonation
         /*Client Secret*/
-        string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
+        string[] scopes = new string[] { "api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default" };
         //var userAccessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] {"user.read"});
 
-        var credential = new DefaultAzureCredential();
+        // var msiClientId = "3887e849-de36-4e50-af35-156171d0e9a5";
+        // var aadAppClientId = "cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee";
+        // var resourceTenantId = "9d26d957-ceda-49e0-b1b0-5d29bf8b5419";
+
+        // ClientAssertionCredential assertion = new ClientAssertionCredential(resourceTenantId, 
+        // aadAppClientId, new ManagedIdentityClientAssertion(msiClientId).GetSignedAssertion);
+
+        // var credential = new DefaultAzureCredential();
      
-        var tokenExchangeRequest = new Azure.Core.TokenRequestContext(scopes);
-        var token = await credential.GetTokenAsync(tokenExchangeRequest);
+        // var tokenExchangeRequest = new Azure.Core.TokenRequestContext(scopes);
+        // var token = await credential.GetTokenAsync(tokenExchangeRequest);
         //Console.WriteLine(token);
-        //var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"});
+        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default"});
         HttpClient httpClient = new HttpClient();
 
-        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Token);        
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);        
     
 
         // string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };

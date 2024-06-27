@@ -10,9 +10,9 @@ builder.Services.AddHttpContextAccessor();
 
 //DO NOT TOUCH
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-    // .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/Users.ReadWrite.All"})
-    // .AddInMemoryTokenCaches();
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+    .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default"})
+    .AddInMemoryTokenCaches();
 
 //wire up graph call
 
