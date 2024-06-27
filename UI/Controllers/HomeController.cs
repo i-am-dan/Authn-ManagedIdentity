@@ -16,59 +16,52 @@ using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 
 namespace UI.Controllers;
 
-// [Authorize]
+[Authorize]
 public class HomeController : Controller
 {
     //private readonly ITokenAcquisition _tokenAcquisition;
 
     private readonly ILogger<HomeController> _logger;
+    private readonly ITokenAcquisition _tokenAcquisition;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ITokenAcquisition tokenAcquisition)
     {
         _logger = logger;
+        _tokenAcquisition = tokenAcquisition;
     }
     
-    // [AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
+    [AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
     public async Task<IActionResult> Index()
-    {     
-        /*This is trying managed identity*/
-        // var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions{
-        //     ExcludeEnvironmentCredential = true,
-        //     ExcludeManagedIdentityCredential = true,
-        //     ExcludeVisualStudioCredential = true,
-        //     ExcludeAzurePowerShellCredential = true,
-        //     ExcludeSharedTokenCacheCredential= true,
-        //     ExcludeWorkloadIdentityCredential= true,
-        //     ExcludeAzureCliCredential = true,
-        //     ExcludeAzureDeveloperCliCredential = true
-        // });
-
-        //var atoken = await credential.GetTokenAsync(new Azure.Core.TokenRequestContext(new string[] {"api://e13b8721-0e2f-4158-8e01-e93c0e97041e/user_impersonation"}));
-        //var actoken = atoken.ToString();
-        
+    {    
+        //api://e13b8721-0e2f-4158-8e01-e93c0e97041e/user_impersonation
         /*Client Secret*/
-        //var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"});
-        HttpClient httpClient = new HttpClient();
-        //httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", actoken);        
-    
+        string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
+        //var userAccessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] {"user.read"});
 
         //var credential = new DefaultAzureCredential();
-        //string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
+     
+        //var tokenExchangeRequest = new Azure.Core.TokenRequestContext(scopes);
+        //var token = await credential.GetTokenAsync(tokenExchangeRequest);
+        //Console.WriteLine(token);
+        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"});
+        HttpClient httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);        
+    
+
+        // string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
  
 
         // // Define the scope of the token
         //string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
-        //string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
 
-        // Get the token
-        //var accessToken = await credential.GetTokenAsync(new Azure.Core.TokenRequestContext());
+        
 
         /*Local*/
         var jsonData = await httpClient.GetStringAsync("https://api-azureauthsample.azurewebsites.net/WeatherForecast");
         //var jsonData = await httpClient.GetStringAsync("https://localhost:7111/WeatherForecast");
           
         ViewData["ApiResult"] = jsonData;
-        
+    
         return View();
     }
 

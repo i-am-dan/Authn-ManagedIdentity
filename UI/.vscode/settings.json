@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/0c525577-e548-443c-b98e-357a7f316dc4/resourceGroups/LaunchDemo/providers/Microsoft.Web/sites/ui-azureauthsample",
+    "appService.deploySubpath": "bin/Publish"
+}

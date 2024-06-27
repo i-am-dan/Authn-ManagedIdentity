@@ -7,45 +7,43 @@ using Microsoft.Identity.Web.UI;
 using Azure.Identity;
 using Microsoft.Extensions.Azure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 //DO NOT TOUCH
-// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-//     .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/Users.ReadWrite.All"})
-//     .AddInMemoryTokenCaches();
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+    .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/Users.ReadWrite.All"})
+    .AddInMemoryTokenCaches();
 
-//Add services to the container.
-//var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ');
-//WORKS
-// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-//     .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})
-//     .AddInMemoryTokenCaches();
+//wire up graph call
 
-// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-//     .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})
-//     .AddInMemoryTokenCaches();
+//https://learn.microsoft.com/en-us/dotnet/azure/sdk/authentication/azure-hosted-apps?tabs=azure-portal%2Cazure-app-service%2Ccommand-line
 
-// Managed Identity
-// builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
-//         .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
-//         .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
-//         .AddInMemoryTokenCaches();
+//https://www.youtube.com/watch?v=2cWIxn-LOp8
+// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+//    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
+
+builder.Services.AddSingleton(new DefaultAzureCredential());
 
 builder.Services.AddControllersWithViews(options =>
 {
-    // var policy = new AuthorizationPolicyBuilder()
-    //     .RequireAuthenticatedUser()
-    //     .Build();
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 
-    // options.Filters.Add(new AuthorizeFilter(policy));
-});
+    options.Filters.Add(new AuthorizeFilter(policy));
+}).AddMicrosoftIdentityUI();
 
 builder.Services.AddRazorPages();//.AddMicrosoftIdentityUI();
+// AddMvcOptions(options => {
+//     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+//     options.Filters.Add(new AuthorizeFilter(policy));
+// })
+// .AddMicrosoftIdentityUI();        
 
 
 var app = builder.Build();
@@ -63,7 +61,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

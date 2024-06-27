@@ -5,7 +5,7 @@ using Microsoft.Identity.Web.Resource;
 
 namespace API.Controllers;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
