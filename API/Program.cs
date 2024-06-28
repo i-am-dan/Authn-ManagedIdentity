@@ -1,18 +1,21 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Abstractions;
-using Microsoft.Identity.Web.Resource;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+    .AddJwtBearer(
+    options => {
+        options.Audience = builder.Configuration["AzureAd:ClientId"];
+        options.Authority = 
+            $"{builder.Configuration["AzureAd:Instance"]}{builder.Configuration["AzureAd:TenantId"]}";
+    });
+    // .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -33,7 +36,12 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", (HttpContext httpContext) =>
 {
-    httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
+    var request = httpContext.Request;
+    
+    //https://stackoverflow.com/questions/60696690/how-can-i-view-console-or-trace-output-in-an-azure-app-service-console-writelin
+    //System.Diagnostics.Trace.WriteLine(request.Headers);
+    
+    //httpContext.VerifyUserHasAnyAcceptedScope(scopeRequiredByApi);
 
     var forecast =  Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
@@ -49,6 +57,7 @@ app.MapGet("/weatherforecast", (HttpContext httpContext) =>
 .WithOpenApi()
 .RequireAuthorization();
 
+app.UseAuthorization();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

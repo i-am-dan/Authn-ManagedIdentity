@@ -1,38 +1,35 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
-using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 //DO NOT TOUCH
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
-    .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default"})
-    .AddInMemoryTokenCaches();
+// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+//     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+//     .EnableTokenAcquisitionToCallDownstreamApi(new string[] {"user.read"})
+//     .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("GraphBeta"))
+//     .AddInMemoryTokenCaches();
 
 //wire up graph call
 
 //https://learn.microsoft.com/en-us/dotnet/azure/sdk/authentication/azure-hosted-apps?tabs=azure-portal%2Cazure-app-service%2Ccommand-line
 
 //https://www.youtube.com/watch?v=2cWIxn-LOp8
-// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+   .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 
-builder.Services.AddSingleton(new DefaultAzureCredential());
 
 builder.Services.AddControllersWithViews(options =>
 {
-    var policy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
+    // var policy = new AuthorizationPolicyBuilder()
+    //     .RequireAuthenticatedUser()
+    //     .Build();
 
-    options.Filters.Add(new AuthorizeFilter(policy));
-}).AddMicrosoftIdentityUI();
+    // options.Filters.Add(new AuthorizeFilter(policy));
+});//.AddMicrosoftIdentityUI();
+
 
 builder.Services.AddRazorPages();//.AddMicrosoftIdentityUI();
 // AddMvcOptions(options => {

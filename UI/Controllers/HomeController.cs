@@ -1,68 +1,43 @@
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Graph;
-using Microsoft.Identity.Abstractions;
-using Microsoft.Identity.Client;
-using Microsoft.Identity.Client.AppConfig;
-using Microsoft.Identity.Web;
 using UI.Models;
 using Azure.Identity;
-using Azure.Core;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace UI.Controllers;
 
 [Authorize]
 public class HomeController : Controller
 {
-    //private readonly ITokenAcquisition _tokenAcquisition;
-
     private readonly ILogger<HomeController> _logger;
-    private readonly ITokenAcquisition _tokenAcquisition;
-
-    public HomeController(ILogger<HomeController> logger, ITokenAcquisition tokenAcquisition)
+    
+    public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
-        _tokenAcquisition = tokenAcquisition;
     }
     
-    [AuthorizeForScopes(Scopes = new string[] {"api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default"})]
+    //It ensures that the user is asked for consent if needed, and incrementally.
+    //[AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default"})]
+    // [AuthorizeForScopes(Scopes = new string[] {"user.read"})]
     public async Task<IActionResult> Index()
-    {    
-        //api://e13b8721-0e2f-4158-8e01-e93c0e97041e/user_impersonation
-        /*Client Secret*/
-        string[] scopes = new string[] { "api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default" };
-        //var userAccessToken = await _tokenAcquisition.GetAccessTokenForUserAsync(new[] {"user.read"});
-
-        // var msiClientId = "3887e849-de36-4e50-af35-156171d0e9a5";
-        // var aadAppClientId = "cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee";
-        // var resourceTenantId = "9d26d957-ceda-49e0-b1b0-5d29bf8b5419";
-
-        // ClientAssertionCredential assertion = new ClientAssertionCredential(resourceTenantId, 
-        // aadAppClientId, new ManagedIdentityClientAssertion(msiClientId).GetSignedAssertion);
-
-        // var credential = new DefaultAzureCredential();
-     
-        // var tokenExchangeRequest = new Azure.Core.TokenRequestContext(scopes);
-        // var token = await credential.GetTokenAsync(tokenExchangeRequest);
-        //Console.WriteLine(token);
-        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default"});
-        HttpClient httpClient = new HttpClient();
-
-        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);        
+    {   
+        //If we want to use scope and use access_token
+        //https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/service-principal-managed-identity?view=azure-devops
+        var credential = new DefaultAzureCredential(
+        new DefaultAzureCredentialOptions
+        {
+            TenantId = "9d26d957-ceda-49e0-b1b0-5d29bf8b5419",
+            ManagedIdentityClientId = "3887e849-de36-4e50-af35-156171d0e9a5"
+        });
+        
+        var token = await credential.GetTokenAsync(new Azure.Core.TokenRequestContext(new[] { "cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default" }));
     
 
-        // string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
- 
+        // Use the access token to call a protected web API.
+        HttpClient httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Token);        
 
-        // // Define the scope of the token
-        //string[] scopes = new string[] { "api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/.default" };
-
-        
 
         /*Local*/
         var jsonData = await httpClient.GetStringAsync("https://api-azureauthsample.azurewebsites.net/WeatherForecast");
@@ -84,4 +59,49 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    // public static async Task<TokenResponse> GetToken()  
+    // {
+    //     //https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=portal%2Chttp
+    //     var resource_uri = "cb7a0fe4-34a0-4f5e-b9d3-da3e4d1aa3ee/.default";
+    //     var client_id = "3887e849-de36-4e50-af35-156171d0e9a5";
+    //     var identity_header = Environment.GetEnvironmentVariable("IDENTITY_HEADER");
+    //     var identity_endpoint = Environment.GetEnvironmentVariable("IDENTITY_ENDPOINT");
+    //     var tokenURI = identity_endpoint + "?resource=" + resource_uri + "&client_id="+ client_id + "&api-version=2019-08-01";
+
+
+    //     HttpClient client = new HttpClient();   
+    //     client.DefaultRequestHeaders.Add("X-IDENTITY-HEADER", identity_header);
+    //     var response = await client.GetStringAsync(String.Format("{0}/MSI/token?resource={1}&api-version={2}&clientid={3}", identity_endpoint, resource_uri, "2019-08-01", client_id));
+        
+    //     var options = new JsonSerializerOptions
+    //     {
+    //         PropertyNameCaseInsensitive = true
+    //     };
+        
+
+    //     TokenResponse tokenResponse = JsonSerializer.Deserialize<TokenResponse>(response, options);
+
+    //     try {
+    //         return tokenResponse;
+    //     }
+    //     catch (HttpRequestException) // Non success
+    //     {
+    //         Console.WriteLine("An error occurred.");
+    //     }
+    //     catch (NotSupportedException) // When content type is not valid
+    //     {
+    //         Console.WriteLine("The content type is not supported.");
+    //     }
+    //     catch (JsonException) // Invalid JSON
+    //     {
+    //         Console.WriteLine("Invalid JSON.");
+    //     }
+
+    //     return null;
+    // }
+}
+
+public class TokenResponse {
+    public String? Access_token {get; set;}
 }
