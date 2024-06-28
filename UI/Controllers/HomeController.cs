@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace UI.Controllers;
 
-[Authorize]
+// [Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
