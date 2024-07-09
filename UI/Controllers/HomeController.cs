@@ -17,10 +17,10 @@ public class HomeController : Controller
         _tokenAcquisition = tokenAcquisition;
     }
 
-    [AuthorizeForScopes(Scopes = new string[] {"api://babdd027-ceb1-49a3-a58c-39e1f557874b/Users.ReadWrite.All"})]
+    [AuthorizeForScopes(Scopes = new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/Users.ReadWrite.All"})]
     public async Task<IActionResult> Index()
     {
-        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://babdd027-ceb1-49a3-a58c-39e1f557874b/Users.ReadWrite.All"});
+        var token = await _tokenAcquisition.GetAccessTokenForUserAsync(new string[] {"api://915f3e69-455d-4c0e-95d0-c9f8f2bef59d/Users.ReadWrite.All"});
         HttpClient httpClient = new HttpClient();
 
         httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
